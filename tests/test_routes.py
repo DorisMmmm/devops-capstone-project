@@ -124,6 +124,18 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     ######################################################################
+    #  L I S T   A C C O U N T S   T E S T   C A S E S
+    ######################################################################
+    def test_get_account_list(self):
+        """It should Get a list of Accounts"""
+        cnt = 10
+        self._create_accounts(cnt)
+        list_response = self.client.get(BASE_URL)
+        self.assertEqual(list_response.status_code, status.HTTP_200_OK)
+        data = list_response.get_json()
+        self.assertEqual(len(data), cnt)
+
+    ######################################################################
     #  R E A D   A C C O U N T   T E S T   C A S E S
     ######################################################################
 
