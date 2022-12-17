@@ -100,18 +100,25 @@ def update_accounts(account_id):
     return account.serialize(), status.HTTP_200_OK
 
 
+
 ######################################################################
 # DELETE AN ACCOUNT
 ######################################################################
-
-# ... place you code here to DELETE an account ...
-
+@app.route("/accounts/<int:account_id>", methods=["DELETE"])
+def delete_account(account_id):
+    """
+    Deletes a single Account
+    This endpoint will delete an existing account based on the account_id that is requested
+    """
+    app.logger.info("Request to read an Account with id: %s", account_id)
+    delete_account = Account.find(account_id)
+    if delete_account:
+        delete_account.delete()
+    return "", status.HTTP_204_NO_CONTENT
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
-
 def check_content_type(media_type):
     """Checks that the media type is correct"""
     content_type = request.headers.get("Content-Type")
