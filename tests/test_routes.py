@@ -150,3 +150,40 @@ class TestAccountService(TestCase):
         """It should not Read an Account that is not found"""
         resp = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    ######################################################################
+    #  U P D A T E   A C C O U N T   T E S T   C A S E S
+    ######################################################################
+    def test_update_an_account(self):
+        """It should Update a single Account"""
+        accounts = self._create_accounts(1)
+        self.assertIsNotNone(accounts)
+        cnt = len(accounts)
+        b = cnt == 1
+        self.assertTrue(b, f"Number of accounts: {cnt}")
+        self.assertEqual(BASE_URL, "/accounts")
+        update_account = accounts[0]
+        path = f"{BASE_URL}/{update_account.id}"
+        response = self.client.get(
+            path, content_type="application/json"
+        )
+        response_json = response.get_json()
+        response_json['email'] = 'heyho@gmx.de'
+        self.assertNotEqual(response.get_json()['email'], response_json['email'])
+        put_response = self.client.put(
+            f"{BASE_URL}/{update_account.id}",
+            json=response_json
+        )
+        self.assertEqual(put_response.status_code, status.HTTP_200_OK)
+        updated_response = self.client.get(
+            f"{BASE_URL}/{update_account.id}", content_type="application/json"
+        )
+        self.assertEqual(response_json['email'], updated_response.get_json()['email'])
+
+    def test_update_not_exist_account(self):
+        """It should try to update an account that doesn't exist, and fail to"""
+        put_response = self.client.put(
+            f"{BASE_URL}/0",
+            json={}
+        )
+        self.assertEqual(put_response.status_code, status.HTTP_404_NOT_FOUND)
